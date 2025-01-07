@@ -1,0 +1,16 @@
+# Ignoruj folder tymczasowy Visual Studio
+.vs/
+
+# Ignoruj foldery kompilacji
+bin/
+obj/
+
+# Ignoruj logi i pliki tymczasowe
+*.log
+*.tmp
+
+# Ignoruj dane generowane przez system
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
