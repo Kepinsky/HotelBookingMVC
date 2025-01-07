@@ -1,16 +1,15 @@
-# Ignoruj folder tymczasowy Visual Studio
-.vs/
-
-# Ignoruj foldery kompilacji
+# Ignoruj pliki tymczasowe
+Data/
 bin/
 obj/
-
-# Ignoruj logi i pliki tymczasowe
-*.log
-*.tmp
-
-# Ignoruj dane generowane przez system
-*.suo
+.vs/
 *.user
-*.userosscache
-*.sln.docstates
+*.suo
+*.log
+*.temp
+
+# Ignoruj pliki związane z migracjami
+Migrations/
+
+# Ignoruj lokalne konfiguracje
+appsettings.Development.json
