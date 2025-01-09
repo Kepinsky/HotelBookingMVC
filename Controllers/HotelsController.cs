@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingMVC.Data;
 using HotelBookingMVC.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace HotelBookingMVC.Controllers
 {
@@ -46,26 +48,27 @@ namespace HotelBookingMVC.Controllers
         // POST: Hotels/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Location,RoomsAvailable")] Hotel hotel)
+        public async Task<IActionResult> Create([Bind("Id,Name,Location,RoomsAvailable")] Hotel hotel)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(hotel);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(hotel);
         }
 
+
         // GET: Hotels/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Hotels == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var hotel = _context.Hotels.Find(id);
+            var hotel = await _context.Hotels.FindAsync(id);
             if (hotel == null)
             {
                 return NotFound();
@@ -75,9 +78,13 @@ namespace HotelBookingMVC.Controllers
         }
 
         // POST: Hotels/Edit/5
+
+
+
+        // POST: Hotels/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,Location,RoomsAvailable")] Hotel hotel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Location,RoomsAvailable")] Hotel hotel)
         {
             if (id != hotel.Id)
             {
@@ -86,23 +93,38 @@ namespace HotelBookingMVC.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Update(hotel);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Update(hotel);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Hotels.Any(e => e.Id == hotel.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-
             return View(hotel);
         }
 
+
         // GET: Hotels/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Hotels == null)
             {
                 return NotFound();
             }
 
-            var hotel = _context.Hotels.FirstOrDefault(h => h.Id == id);
+            var hotel = await _context.Hotels
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (hotel == null)
             {
                 return NotFound();
@@ -114,17 +136,21 @@ namespace HotelBookingMVC.Controllers
         // POST: Hotels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var hotel = _context.Hotels.Find(id);
+            if (_context.Hotels == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Hotels'  is null.");
+            }
+            var hotel = await _context.Hotels.FindAsync(id);
             if (hotel != null)
             {
                 _context.Hotels.Remove(hotel);
-                _context.SaveChanges();
             }
 
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }
-}
+    }
 

@@ -1,23 +1,25 @@
-﻿namespace HotelBookingMVC.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HotelBookingMVC.Models
 {
     public class Hotel
     {
-        // Identyfikator hotelu (Primary Key)
         public int Id { get; set; }
 
-        // Nazwa hotelu
+        [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
 
-        // Lokalizacja hotelu
+        [Required(ErrorMessage = "Location is required")]
         public string Location { get; set; }
 
-        // Liczba dostępnych pokoi
+        [Range(1, 1000, ErrorMessage = "Rooms Available must be between 1 and 1000")]
         public int RoomsAvailable { get; set; }
 
-        // Konstruktor domyślny
+
+        // Default constructor
         public Hotel()
         {
-            // Ustawienie domyślnych wartości, aby uniknąć ostrzeżeń
+            // Set default values to avoid warnings
             Name = string.Empty;
             Location = string.Empty;
         }
