@@ -10,6 +10,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Konfiguracja MVC
 builder.Services.AddControllersWithViews();
 
+// Konfiguracja Swaggera
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Middleware dla obs³ugi b³êdów w œrodowisku produkcyjnym
@@ -17,6 +21,12 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+else
+{
+    // Middleware dla Swaggera
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 // Middleware dla HTTPS i plików statycznych
@@ -27,6 +37,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // Middleware dla autoryzacji (jeœli dodasz póŸniej funkcje u¿ytkowników)
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Mapowanie trasy domyœlnej dla kontrolerów i widoków
